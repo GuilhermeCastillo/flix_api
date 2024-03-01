@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Avg
 from movies.models import Movie
 
 
@@ -12,18 +13,10 @@ class MovieModelSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_rate(self, obj):
+        rate = obj.reviews.aggregate(Avg("stars"))["stars__avg"]
 
-        reviews = obj.reviews.all()
-
-        if reviews:
-            sum_reviews = 0
-
-            for review in reviews:
-                sum_reviews += review.stars
-
-            revies_count = reviews.count()
-
-            return round(sum_reviews / revies_count, 1)
+        if rate:
+            return round(rate, 1)
 
         return None
 
