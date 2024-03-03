@@ -38,14 +38,14 @@ class MovieStatsView(views.APIView):
             count=(Count("id"))
         )
         total_reviews = Review.objects.count()
-        average_stars = round(Review.objects.aggregate(avg_stars=Avg("stars"))["avg_stars"], 1)
+        average_stars = Review.objects.aggregate(avg_stars=Avg("stars"))["avg_stars"]
 
         return response.Response(
             data={
                 "total_movies": total_movies,
                 "movies_by_genre": movies_by_genre,
                 "total_reviews": total_reviews,
-                "average_stars": average_stars,
+                "average_stars": round(average_stars, 1) if average_stars else 0,
             },
             status=status.HTTP_200_OK,
         )
